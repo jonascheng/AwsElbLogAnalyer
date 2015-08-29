@@ -10,11 +10,13 @@
 # trendmicro.com:443/bby/report HTTP/1.1" "Mozilla/5.0 (compatible; MSIE 10.0; Win
 # dows NT 6.1; Trident/6.0) casperjs e2e check" ECDHE-RSA-AES128-SHA TLSv1
 #
+import logging
 import sys
 import os
 
 # parse source IP from single ELB access log file
 def parseSourceIP(ELBLogfile):
+    logging.info(ELBLogfile)
     ipList = []
     with open(ELBLogfile, "r") as ins:
         for line in ins:
@@ -24,10 +26,19 @@ def parseSourceIP(ELBLogfile):
                 sourceIP = ls[2].split(":")
                 ipList.append(sourceIP[0])
             except:
+                logging.error(ls)
                 continue
     # remove duplication
     ipList = list(set(ipList))
     return ipList
+
+# toggle the logging level
+logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
+logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.getLogger(__name__).setLevel(logging.ERROR)
 
 # collect all access log file(s) into a list
 if len(sys.argv) >= 2:

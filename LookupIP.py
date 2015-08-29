@@ -6,6 +6,7 @@
 #
 from bs4 import BeautifulSoup
 import urllib2
+import logging
 import random
 import time
 import sys
@@ -25,12 +26,11 @@ UserAgent = [
 def requester(ip):
     url = BaseURL + ip
     try:
-        print(random.choice(UserAgent))
-        raise
-        #req = urllib2.Request(url)
-        #req.add_unredirected_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11')
-        #return urllib2.urlopen(req).read()
+        req = urllib2.Request(url)
+        req.add_unredirected_header('User-Agent', random.choice(UserAgent))
+        return urllib2.urlopen(req).read()
     except urllib2.HTTPError, err:
+        logging.error(err)
         raise
 
 def parser(response):
@@ -45,6 +45,14 @@ def parser(response):
             break
     return ls
 
+# toggle the logging level
+logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL)
+logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
+logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+logging.getLogger(__name__).setLevel(logging.ERROR)
+
 # collect all access log file(s) into a list
 if len(sys.argv) >= 2:
     file = sys.argv[1]
@@ -58,7 +66,7 @@ if len(sys.argv) >= 2:
             except:
                 ipFailed.append(ip)
             # delay to prevent from server blocking the request
-            time.sleep(3)
+            time.sleep(1)
     if len(ipFailed) != 0:
-        print("The following IP got exception:")
+        print("\nThe following IP got exception:\n")
         print("\n".join(ipFailed))
