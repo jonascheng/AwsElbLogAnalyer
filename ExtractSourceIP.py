@@ -33,12 +33,7 @@ def parseSourceIP(ELBLogfile):
     return ipList
 
 # toggle the logging level
-logging.basicConfig(stream=sys.stderr, level=logging.CRITICAL)
-logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 logging.basicConfig(stream=sys.stderr, level=logging.WARNING)
-logging.basicConfig(stream=sys.stderr, level=logging.INFO)
-logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
-logging.getLogger(__name__).setLevel(logging.ERROR)
 
 # collect all access log file(s) into a list
 if len(sys.argv) >= 2:
